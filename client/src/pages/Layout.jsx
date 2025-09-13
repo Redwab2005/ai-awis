@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
+import Header from "../components/header";
+import Sidebar from "../components/Sidebar";
 export default function Layout() {
+  const [sidebar, setSidebar] = useState(false);
+
   return (
     <>
-      <h1>layout </h1>
-      <Outlet />
-      <h1>fotter</h1>
+      <Header setSidebar={setSidebar} sidebar={sidebar} />
+      <div className="flex-1 w-full flex h-[clac(100vh-62px)]">
+        <Sidebar sidebar={sidebar} setSidebar={setSidebar} />
+        <div className="flex-1 bg-[#F9FAFB] ">
+          <Outlet />
+        </div>
+      </div>
     </>
   );
 }
