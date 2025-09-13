@@ -6,14 +6,17 @@ export default function Layout() {
   const [sidebar, setSidebar] = useState(false);
 
   return (
-    <>
+    <div className="overflow-hidden h-screen w-screen">
       <Header setSidebar={setSidebar} sidebar={sidebar} />
-      <div className="flex-1 w-full flex h-[clac(100vh-62px)]">
+      <div
+        className="flex-1 w-full flex"
+        style={{ height: "calc(100vh - 62px)" }}
+      >
         <Sidebar sidebar={sidebar} setSidebar={setSidebar} />
-        <div className="flex-1 bg-[#F9FAFB] ">
+        <div className="flex-1 bg-[#F9FAFB] overflow-hidden h-full">
           <Outlet />
         </div>
       </div>
-    </>
+    </div>
   );
 }

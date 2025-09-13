@@ -25,12 +25,12 @@ function Sidebar({ Sidebar, setSidebar }) {
   //NOTE: if the user in not logged in, we must redirect them to the login page
   return (
     <div
-      className={`w-60 flex flex-col bg-gray-100 ${
+      className={`w-60 flex  flex-col ${
         Sidebar ? "translate-x-0" : "max-sm:-translate-x-full"
-      } transition-transform duration-300 ease-in-out h-screen justify-between`}
+      } transition-transform duration-300 ease-in-out h-screen `}
     >
       {/* Top user information */}
-      <div className="my-2">
+      <div className="my-5">
         <img
           src="/profile_img_1.png"
           alt="profile"
@@ -39,7 +39,7 @@ function Sidebar({ Sidebar, setSidebar }) {
         <h2 className="text-center mt-1 text-lg font-semibold">John Doe</h2>
       </div>
       {/* Nav bar items */}
-      <div className="flex flex-col  items-center gap-1">
+      <div className="flex flex-col my-2  items-center gap-1">
         {navItems.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
@@ -61,7 +61,7 @@ function Sidebar({ Sidebar, setSidebar }) {
         ))}
       </div>
       {/* Bottom user info and logout */}
-      <div className="flex items-center justify-between px-4 pt-1 bg-gray-200">
+      <div className="flex mt-11 items-center justify-between px-4 pt-1 border-[#e5e5e5] bg-[#e5e5e5]">
         <img
           src="/profile_img_1.png"
           alt="profile"
