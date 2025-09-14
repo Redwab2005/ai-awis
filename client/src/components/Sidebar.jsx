@@ -21,14 +21,21 @@ const navItems = [
   { to: "/ai/community", label: "Community", icon: Users },
 ];
 
-function Sidebar({ Sidebar, setSidebar }) {
+function Sidebar({ sidebar, setSidebar }) {
   //NOTE: if the user in not logged in, we must redirect them to the login page
   return (
     <div
-      className={`w-60 flex  flex-col ${
-        Sidebar ? "translate-x-0" : "max-sm:-translate-x-full"
-      } transition-transform duration-300 ease-in-out h-screen `}
+      className={`
+        w-60 flex flex-col
+        fixed top-[62px] left-0 h-[calc(100vh-62px)] bg-white shadow-md z-50
+        transition-transform duration-300 ease-in-out
+        ${sidebar ? "translate-x-0" : "-translate-x-full"}
+        sm:relative sm:top-0 sm:left-0 sm:h-full sm:shadow-none sm:bg-gray-100 sm:z-auto sm:translate-x-0
+        `}
     >
+      {/* in small screen the sidebar will be fixed (you can move it without let space behiend)
+      and in above the small device will be relative */}
+
       {/* Top user information */}
       <div className="my-5">
         <img
@@ -39,7 +46,7 @@ function Sidebar({ Sidebar, setSidebar }) {
         <h2 className="text-center mt-1 text-lg font-semibold">John Doe</h2>
       </div>
       {/* Nav bar items */}
-      <div className="flex flex-col my-2  items-center gap-1">
+      <div className="flex flex-col my-2 items-center gap-1">
         {navItems.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
@@ -61,7 +68,7 @@ function Sidebar({ Sidebar, setSidebar }) {
         ))}
       </div>
       {/* Bottom user info and logout */}
-      <div className="flex mt-11 items-center justify-between px-4 pt-1 border-[#e5e5e5] bg-[#e5e5e5]">
+      <div className="flex mt-auto h-[60px] items-center justify-between px-4 pt-1 border-[#e5e5e5] bg-[#e5e5e5]">
         <img
           src="/profile_img_1.png"
           alt="profile"
