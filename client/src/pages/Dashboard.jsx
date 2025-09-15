@@ -5,8 +5,8 @@ import RecentCreation from "../components/RecentCreation";
 export default function Dashboard() {
   return (
     <div className="flex-1 p-8 overflow-y-auto">
-      <dev className={"flex flex-col w-full h-full justify-between  "}>
-        <dev className="flex justify-between">
+      <div className={"flex flex-col w-full h-full justify-between  "}>
+        <div className="flex justify-between">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-6 h-[99px] w-[310px] rounded-lg shadow-md flex items-center justify-between">
               <div>
@@ -40,8 +40,8 @@ export default function Dashboard() {
               </div>
             </div>
           </div>{" "}
-        </dev>
-      </dev>
+        </div>
+      </div>
       <div className="mt-8  flex flex-col gap-2">
         <h2 className="text-2xl font-mono mb-4">Recent Creations</h2>
         {dummyCreationData.map(({ prompt, type, created_at }) => (
