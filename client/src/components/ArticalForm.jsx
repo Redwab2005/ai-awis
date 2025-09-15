@@ -4,17 +4,13 @@ import GradientButton from "./GradientButton";
 import SelectBtn from "./SelectBtn";
 
 function ArticalForm() {
-  const [selected, setSelected] = useState("Short");
+  const [selected, setSelected] = useState();
 
   return (
     <div className=" bg-[#FFFFFF] h-[310px] w-full md:w-[507px]   rounded-[10px] border-[1px] border-[#EBEBEB] p-5">
       <div className="flex flex-col gap-7">
         <div className="flex gap-2 items-center">
-          <img
-            src="/icons/star.svg"
-            alt=" icon"
-            className="w-5 h-5 text-blue-600"
-          />
+          <img src="/icons/star.svg" alt=" icon" />
           <p className="text-[#000000] font-bold text-[20px]">
             AI Article Writer
           </p>
@@ -40,12 +36,20 @@ function ArticalForm() {
 
           <div className="flex gap-2">
             {/* Short Button */}
-            <SelectBtn selected={selected} setSelected={setSelected}>
+            <SelectBtn
+              selected={selected}
+              setSelected={setSelected}
+              selectColor={"blue-500"}
+            >
               Short (100 - 200 word)
             </SelectBtn>
 
             {/* Long Button */}
-            <SelectBtn selected={selected} setSelected={setSelected}>
+            <SelectBtn
+              selected={selected}
+              setSelected={setSelected}
+              selectColor={"blue-500"}
+            >
               Long (500 - 800 word)
             </SelectBtn>
           </div>
