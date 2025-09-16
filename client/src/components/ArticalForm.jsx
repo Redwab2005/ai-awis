@@ -26,7 +26,7 @@ function ArticalForm() {
           <input
             id="articleTopic"
             type="text"
-            className="w-full h-9 rounded-lg border border-gray-300 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className="w-full h-9 rounded-lg border  px-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
             placeholder="The future of artificial intelligence"
           />
         </div>

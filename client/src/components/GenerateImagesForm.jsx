@@ -1,4 +1,4 @@
-import { PenBox, Star } from "lucide-react";
+import { Image, PenBox, Star } from "lucide-react";
 import SelectBtn from "./SelectBtn";
 import GradientButton from "./GradientButton";
 
@@ -13,7 +13,7 @@ function GenerateImagesForm({ selected, setSelected }) {
   ];
 
   return (
-    <div className=" bg-[#FFFFFF] h-[413px] w-full md:w-[507px]   rounded-[10px] border-[1px] border-[#EBEBEB] p-5">
+    <div className=" bg-[#FFFFFF] h-[453px] w-full md:w-[507px]   rounded-[10px] border-[1px] border-[#EBEBEB] p-5">
       <div className="flex flex-col gap-7">
         <div className="flex gap-2 items-center">
           <Star className="w-5 h-5 text-green-600" />
@@ -32,7 +32,7 @@ function GenerateImagesForm({ selected, setSelected }) {
           <textarea
             id="articleTopic"
             type="text"
-            className="w-full h-32 rounded-lg border border-gray-300 px-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
+            className="w-full h-32 rounded-lg border px-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
             placeholder="The future of artificial intelligence"
           />
         </div>
@@ -57,7 +57,7 @@ function GenerateImagesForm({ selected, setSelected }) {
             ))}
           </div>
         </div>
-        <GradientButton icon={PenBox} from="#00AD25" to="#04FF50">
+        <GradientButton icon={Image} from="#00AD25" to="#04FF50">
           Generate Article
         </GradientButton>
       </div>
