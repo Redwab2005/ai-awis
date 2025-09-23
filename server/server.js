@@ -1,14 +1,14 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
-import sql from "./configs/db.js";
-const app = express();
-app.use(cors());
-dotenv.config();
+const { default: mongoose } = require("mongoose");
+const app = require("./app.js");
 const PORT = process.env.PORT || 3000;
-//localhost:3000/api/v1/
-app.get("/api/v1/", async (req, res) => {
-  res.json({ message: "Hello from server" });
+
+//db string
+const db = process.env.DATABASE_URL.replace(
+  "<PASSWORD>",
+  process.env.DATABASE_PASSWORD
+);
+mongoose.connect(db).then(() => {
+  console.log("DB connection successful");
 });
 app.listen(PORT, () => {
   console.log(`Server is running on Port ${PORT}`);
