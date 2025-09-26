@@ -1,6 +1,9 @@
 const { default: mongoose } = require("mongoose");
 const app = require("./app.js");
+const connectCloudinary = require("./configs/cloudinary.js");
 const PORT = process.env.PORT || 3000;
+
+connectCloudinary();
 
 //db string
 const db = process.env.DATABASE_URL.replace(
