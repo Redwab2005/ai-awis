@@ -43,6 +43,9 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  passwordChangedAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
 });
 
 //middleware to hash password before saving
@@ -55,6 +58,11 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000; //subtract 1 sec to ensure token is created after password has been changed
+  next();
+});
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
