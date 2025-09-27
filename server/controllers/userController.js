@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
 const sendEmail = require("../utils/Email");
+const Email = require("../utils/Email");
 
 //function to sign token
 const signToken = (id) => {
@@ -23,6 +24,7 @@ exports.signup = async (req, res) => {
       user_name,
       confirmPassword,
     });
+    await new Email(newUser).sendWelcom();
     //create token
     const token = signToken(newUser._id);
     res.status(200).json({
@@ -102,11 +104,8 @@ exports.forgotPassword = async (req, res) => {
   const message = `Forgot your password? Submit a PATCH request with your new password and confirmPassword to: ${resetURL}.\nIf you didn't forget your password, please ignore this email!`;
 
   try {
-    await sendEmail({
-      email: user.email,
-      subject: "Your password reset token (valid for 10 min)",
-      message,
-    });
+    await new Email(user, resetURL).sendResetPassword();
+
     res.status(200).json({
       status: "success",
       message: "Token sent to email!",
@@ -123,7 +122,6 @@ exports.forgotPassword = async (req, res) => {
 };
 
 exports.resetPassword = async (req, res) => {
-  //{{URL}}/api/v1/user/resetPassword/bec484678354db73ab43f575ad28df964e243a6c2e4accad6fe0818eb6087fdf
   try {
     //1) get user based on the token
     const hashedToken = crypto
