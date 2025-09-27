@@ -1,3 +1,5 @@
+const dotenv = require("dotenv");
+dotenv.config();
 const { default: mongoose } = require("mongoose");
 const app = require("./app.js");
 const connectCloudinary = require("./configs/cloudinary.js");
