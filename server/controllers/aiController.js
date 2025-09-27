@@ -2,6 +2,10 @@ const OpenAI = require("openai");
 const axios = require("axios");
 const cloudinary = require("cloudinary").v2;
 const FormData = require("form-data");
+const e = require("express");
+const { resource } = require("../app");
+const fs = require("fs");
+const pdf = require("pdf-parse/lib/pdf-parse.js");
 
 const AI = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -106,6 +110,102 @@ const generateImage = async (req, res) => {
     });
   }
 };
+const removeBackground = async (req, res) => {
+  try {
+    const path = req.file.path;
 
-// export in CommonJS
-module.exports = { generateArticle, generateImage, generateBlogTitle };
+   
+    // ✅ Upload to Cloudinary
+    const uploadResponse = await cloudinary.uploader.upload(path,{
+      transformation:[
+        {
+          effect:'background_removal',
+          background_removal:'remove_the_background',
+        }
+      ]
+    });
+
+    res.json({
+      success: true,
+      content: uploadResponse.secure_url,
+    });
+  } catch (error) {
+    console.error("Image generation error:", error.message);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const removeObject = async (req, res) => {
+  try {
+    const { object } = req.body;
+    const path = req.file.path;
+
+   
+    // ✅ Upload to Cloudinary
+    const {public_id} = await cloudinary.uploader.upload(path);
+    const imageUrl = cloudinary.url(public_id,{
+      transformation: [{effect:`gen_remove:${object}`}],
+      resource_type:'image'
+    });
+
+    res.json({
+      success: true,
+      content: imageUrl,
+    });
+  } catch (error) {
+    console.error("Image generation error:", error.message);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+const resumeReview = async (req, res) => {
+  try {
+    
+    const { resume } = req.file;
+    if (resume.size > 5 * 1024 * 1024) {
+      return res.json ({
+        success: false,
+        message: "File size exceeds 5MB limit",
+      })
+    }
+
+   
+   const dataBuffer = fs.readFileSync(resume.path);
+   const pdf = await pdf(dataBuffer);
+   const prompt = `Review my resume provide constructive feedback on its strengths and weaknesses and areas for improvement: ${pdf.text}`;
+      const response = await AI.chat.completions.create({
+      model: "gemini-2.0-flash",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      temperature: 0.7,
+      max_tokens: 1000,
+    });
+
+    const content = response.choices[0].message.content;
+    res.json({
+      success: true,
+      content,
+    });
+  } catch (error) {
+    console.error("Image generation error:", error.message);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+
+
+module.exports = { generateArticle, generateImage, generateBlogTitle, removeBackground, removeObject, resumeReview };
+
