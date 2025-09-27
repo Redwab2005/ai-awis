@@ -3,7 +3,6 @@ const axios = require("axios");
 const cloudinary = require("cloudinary").v2;
 const FormData = require("form-data");
 
-
 const AI = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
   baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
@@ -27,13 +26,12 @@ const generateArticle = async (req, res) => {
 
     const content = response.choices[0].message.content;
 
-    res.json({
+    res.status(200).json({
       success: true,
       content,
     });
   } catch (error) {
-    console.log(error.message);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -42,7 +40,7 @@ const generateArticle = async (req, res) => {
 
 const generateBlogTitle = async (req, res) => {
   try {
-    const { prompt} = req.body;
+    const { prompt } = req.body;
 
     const response = await AI.chat.completions.create({
       model: "gemini-2.0-flash",
@@ -58,13 +56,12 @@ const generateBlogTitle = async (req, res) => {
 
     const content = response.choices[0].message.content;
 
-    res.json({
+    res.status(200).json({
       success: true,
       content,
     });
   } catch (error) {
-    console.log(error.message);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });
@@ -94,23 +91,21 @@ const generateImage = async (req, res) => {
 
     // ✅ Upload to Cloudinary
     const uploadResponse = await cloudinary.uploader.upload(
-      `data:image/png;base64,${base64Image}`, 
+      `data:image/png;base64,${base64Image}`,
       { folder: "clipdrop" }
     );
 
-    res.json({
+    res.status(200).json({
       success: true,
       content: uploadResponse.secure_url,
     });
   } catch (error) {
-    console.error("Image generation error:", error.message);
-    res.json({
+    res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
-
 
 // export in CommonJS
 module.exports = { generateArticle, generateImage, generateBlogTitle };
