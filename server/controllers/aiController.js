@@ -7,11 +7,30 @@ const { resource } = require("../app");
 const fs = require("fs");
 const pdf = require("pdf-parse/lib/pdf-parse.js");
 const AiModel = require("../model/aiModel");
+const { count } = require("console");
 
 const AI = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
   baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
 });
+
+const recentCreation = async (req, res) => {
+  try {
+    const creations = await AiModel.find({ user_id: req.user._id })
+      .sort({ createdAt: -1 })
+      .limit(10);
+    res.status(200).json({
+      success: true,
+      count: creations.length,
+      creations,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 const generateArticle = async (req, res) => {
   try {
@@ -88,7 +107,6 @@ const generateBlogTitle = async (req, res) => {
 };
 const generateImage = async (req, res) => {
   try {
-    console.log(req.body);
     const { prompt } = req.body;
 
     const form = new FormData();
@@ -117,6 +135,7 @@ const generateImage = async (req, res) => {
     await AiModel.create({
       user_id: req.user._id,
       type: "image-generation",
+      isPublic: req.body.isPublic || false,
       prompt,
       result: uploadResponse.secure_url,
     });
@@ -239,6 +258,26 @@ const resumeReview = async (req, res) => {
   }
 };
 
+const community = async (req, res) => {
+  try {
+    const creations = await AiModel.find({
+      type: "image-generation",
+      isPublic: true,
+    })
+      .sort({ createdAt: -1 })
+      .limit(20);
+    res.status(200).json({
+      success: true,
+      creations,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   generateArticle,
   generateImage,
@@ -246,4 +285,6 @@ module.exports = {
   removeBackground,
   removeObject,
   resumeReview,
+  recentCreation,
+  community,
 };

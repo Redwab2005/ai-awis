@@ -18,6 +18,16 @@ const aiModelSchema = new mongoose.Schema({
       "resume-review",
     ],
   },
+  isPublic: {
+    type: Boolean,
+    default: false,
+    validate: {
+      validator: function (v) {
+        return this.type === "image-generation";
+      },
+      message: "isPublic is only valid for image-generation type",
+    },
+  },
   prompt: {
     type: String,
     required: true,
