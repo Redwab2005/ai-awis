@@ -23,9 +23,13 @@ const aiModelSchema = new mongoose.Schema({
     default: false,
     validate: {
       validator: function (v) {
-        return this.type === "image-generation";
+        // allow true only if type === "image-generation"
+        if (v === true && this.type !== "image-generation") {
+          return false;
+        }
+        return true;
       },
-      message: "isPublic is only valid for image-generation type",
+      message: "isPublic can only be true when type is 'image-generation'",
     },
   },
   prompt: {
