@@ -1,9 +1,17 @@
 const express = require("express");
-const {generateImage, generateArticle, generateBlogTitle, removeBackground, removeObject, resumeReview } = require("../controllers/aiController");
+const {
+  generateImage,
+  generateArticle,
+  generateBlogTitle,
+  removeBackground,
+  removeObject,
+  resumeReview,
+} = require("../controllers/aiController");
 const upload = require("../configs/multer");
-
+const { protect } = require("../middlewares/protected");
 
 const aiRouter = express.Router();
+aiRouter.use(protect);
 aiRouter.post("/generate-image", generateImage);
 aiRouter.post("/generate-blog-title", generateBlogTitle);
 aiRouter.post("/generate-article", generateArticle);

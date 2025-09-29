@@ -1,27 +1,34 @@
+const jwt = require("jsonwebtoken");
+const User = require("../model/userModel");
 exports.protect = (req, res, next) => {
-  //1) Getting token and check of it's there
   let authHeader = req.headers.authorization;
-  authHeader =
+  const token =
     authHeader && authHeader.startsWith("Bearer ")
       ? authHeader.split(" ")[1]
       : null;
 
-  if (!authHeader) {
+  if (!token) {
     return res.status(401).json({
       status: "fail",
       message: "You are not logged in!",
     });
   }
-  //2) Verification token
-  jwt.verify(authHeader, process.env.JWT_SECRET, (err, decoded) => {
+
+  jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
     if (err) {
       return res.status(401).json({
         status: "fail",
         message: "Invalid token or token has expired",
       });
     }
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      return res.status(401).json({
+        status: "fail",
+        message: "User no longer exists.",
+      });
+    }
+    req.user = user;
+    next();
   });
-
-  //if the token is valid, proceed to next middleware
-  next();
 };
