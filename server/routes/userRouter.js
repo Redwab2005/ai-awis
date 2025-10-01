@@ -12,12 +12,6 @@ router.post("/resetPassword/:token", userController.resetPassword);
 router.get("/me", protect, (req, res) => {
   res.json({ success: true, user: req.user });
 });
-router.post("/logout", (req, res) => {
-  res.clearCookie("token", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  });
-  res.json({ success: true, message: "Logged out" });
-});
+router.post("/logout", userController.logout);
+
 module.exports = router;

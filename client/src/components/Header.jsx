@@ -1,26 +1,13 @@
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { LogOut, Menu, X } from "lucide-react";
 import logo from "../assets/logo.svg";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useUser } from "../hook/useUser";
+import { useLogout } from "../hook/useLogout";
 
 export default function Header({ sidebar, setSidebar }) {
-  const [user, setUser] = useState(null);
-  useEffect(() => {
-    async function fetchUser() {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/user/me`,
-        {
-          credentials: "include",
-        }
-      );
-      if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
-      }
-    }
-    fetchUser();
-  }, []);
+  const { user, isLoading } = useUser();
+  const logout = useLogout();
+
   return (
     <header className="h-[62px] bg-[#FDFDFE] border-b border-[#e5e5e5] flex items-center justify-between px-6">
       {/* Logo */}
@@ -29,8 +16,22 @@ export default function Header({ sidebar, setSidebar }) {
       </Link>
 
       <div className="flex items-center gap-4">
-        {user ? (
-          <span>{user.user_name}</span>
+        {isLoading ? (
+          <span>Loading...</span>
+        ) : user ? (
+          <>
+            <span>{user.user_name} </span>
+            <button
+              className="ml-2 text-gray-600 hover:text-red-500"
+              title="Logout"
+              onClick={() => {
+                logout.mutate(undefined);
+              }}
+              disabled={logout.isLoading}
+            >
+              <LogOut />
+            </button>
+          </>
         ) : (
           <Link
             to="/signup"

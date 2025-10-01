@@ -1,44 +1,27 @@
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-
+import { signup } from "../api/auth";
+import toast from "react-hot-toast";
 function Signup() {
+  const queryClient = useQueryClient();
+  const { mutate, isPending: isLoading } = useMutation({
+    mutationFn: (data) => signup(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["user"]);
+      toast.success("Signup successful!");
+      navigate("/");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
+  // Handle form submission
   const handleSignup = async (e) => {
     e.preventDefault();
-    try {
-      setIsLoading(true);
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData);
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/v1/user/signup`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            user_name: data.username,
-            email: data.email,
-            password: data.password,
-            confirmPassword: data["confirm-password"],
-          }),
-        }
-      );
-
-      const result = await res.json();
-
-      if (res.ok) {
-        navigate("/"); // ✅ correct way to redirect
-      } else {
-        alert(`Signup failed: ${result.message}`);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData);
+    mutate(data);
   };
 
   return (

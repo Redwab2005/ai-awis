@@ -37,7 +37,6 @@ exports.signup = async (req, res) => {
       status: "success",
       message: "User signed up successfully",
       data: newUser,
-      token,
     });
   } catch (err) {
     res.status(500).json({
@@ -78,7 +77,7 @@ exports.login = async (req, res) => {
     res.status(200).json({
       status: "success",
       message: "User logged in successfully",
-      token,
+      data: { user_name: user.user_name },
     });
   } catch (err) {
     res.status(500).json({
@@ -163,7 +162,6 @@ exports.resetPassword = async (req, res) => {
     res.status(200).json({
       status: "success",
       message: "Password reset successful",
-      token,
     });
   } catch (err) {
     res.status(500).json({
@@ -171,4 +169,14 @@ exports.resetPassword = async (req, res) => {
       message: err.message,
     });
   }
+};
+
+exports.logout = (req, res) => {
+  res.cookie("token", "", {
+    httpOnly: true,
+    expires: new Date(0), // Expire immediately
+    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.status(200).json({ status: "success" });
 };
