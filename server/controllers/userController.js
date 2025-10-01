@@ -27,11 +27,16 @@ exports.signup = async (req, res) => {
     await new Email(newUser).sendWelcom();
     //create token
     const token = signToken(newUser._id);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // true only in production with HTTPS
+      sameSite: "lax", // or "none" if frontend and backend are on different domains
+    });
+
     res.status(200).json({
       status: "success",
       message: "User signed up successfully",
       data: newUser,
-      token,
     });
   } catch (err) {
     res.status(500).json({
@@ -62,10 +67,17 @@ exports.login = async (req, res) => {
     }
     //3) if everything ok, send token to client
     const token = signToken(user._id);
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // true on HTTPS
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    };
+    res.cookie("token", token, cookieOptions);
     res.status(200).json({
       status: "success",
       message: "User logged in successfully",
-      token,
+      data: { user_name: user.user_name },
     });
   } catch (err) {
     res.status(500).json({
@@ -150,7 +162,6 @@ exports.resetPassword = async (req, res) => {
     res.status(200).json({
       status: "success",
       message: "Password reset successful",
-      token,
     });
   } catch (err) {
     res.status(500).json({
@@ -158,4 +169,14 @@ exports.resetPassword = async (req, res) => {
       message: err.message,
     });
   }
+};
+
+exports.logout = (req, res) => {
+  res.cookie("token", "", {
+    httpOnly: true,
+    expires: new Date(0), // Expire immediately
+    sameSite: "strict",
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.status(200).json({ status: "success" });
 };
