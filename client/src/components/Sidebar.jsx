@@ -9,6 +9,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useLogout } from "../hook/useLogout";
 
 const navItems = [
   { to: "/ai", label: "Dashboard", icon: House },
@@ -22,6 +23,8 @@ const navItems = [
 ];
 
 function Sidebar({ sidebar, setSidebar }) {
+  const logout = useLogout();
+
   //NOTE: if the user in not logged in, we must redirect them to the login page
   return (
     <div
@@ -82,8 +85,9 @@ function Sidebar({ sidebar, setSidebar }) {
           className="ml-2 text-gray-600 hover:text-red-500"
           title="Logout"
           onClick={() => {
-            // handle logout here
+            logout.mutate(undefined);
           }}
+          disabled={logout.isLoading}
         >
           <LogOut />
         </button>
