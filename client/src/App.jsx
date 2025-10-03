@@ -12,9 +12,10 @@ import BlogTitles from "./pages/BlogTitles";
 import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
-import Logout from "./pages/Logout";
 import ProtectedRoute from "./components/protectedRoute";
 import { Toaster } from "react-hot-toast";
+import ForgetPassword from "./pages/ForgetPassword";
+import ResetPassword from "./pages/ResetPassword";
 function App() {
   return (
     <div>
@@ -22,7 +23,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/logout" element={<Logout />} />
+        <Route path="/forgot-password" element={<ForgetPassword />} />
+        <Route path="/resetPassword/:token" element={<ResetPassword />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/ai" element={<Layout />}>
             <Route index element={<Dashboard />} />
