@@ -1,11 +1,8 @@
 const jwt = require("jsonwebtoken");
 const User = require("../model/userModel");
+
 exports.protect = (req, res, next) => {
-  let authHeader = req.headers.authorization;
-  const token =
-    authHeader && authHeader.startsWith("Bearer ")
-      ? authHeader.split(" ")[1]
-      : null;
+  const token = req.cookies.token; // Directly get the cookie
 
   if (!token) {
     return res.status(401).json({
@@ -21,6 +18,7 @@ exports.protect = (req, res, next) => {
         message: "Invalid token or token has expired",
       });
     }
+
     const user = await User.findById(decoded.id);
     if (!user) {
       return res.status(401).json({
@@ -28,6 +26,7 @@ exports.protect = (req, res, next) => {
         message: "User no longer exists.",
       });
     }
+
     req.user = user;
     next();
   });
