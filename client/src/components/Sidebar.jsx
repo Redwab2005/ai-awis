@@ -7,9 +7,11 @@ import {
   Scissors,
   Eraser,
   LogOut,
+  Loader,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useLogout } from "../hook/useLogout";
+import { useUser } from "../hook/useUser";
 
 const navItems = [
   { to: "/ai", label: "Dashboard", icon: House },
@@ -24,7 +26,8 @@ const navItems = [
 
 function Sidebar({ sidebar, setSidebar }) {
   const logout = useLogout();
-
+  const { user, isLoading } = useUser();
+  console.log("User in sidebar:", user);
   //NOTE: if the user in not logged in, we must redirect them to the login page
   return (
     <div
@@ -41,12 +44,20 @@ function Sidebar({ sidebar, setSidebar }) {
 
       {/* Top user information */}
       <div className="my-5">
-        <img
-          src="/profile_img_1.png"
-          alt="profile"
-          className="w-16 h-16 rounded-full mx-auto"
-        />
-        <h2 className="text-center mt-1 text-lg font-semibold">John Doe</h2>
+        {isLoading ? (
+          <Loader className="w-10 h-10 animate-spin text-[#5044E5]" />
+        ) : (
+          <>
+            <img
+              src="/profile_img_1.png"
+              alt="profile"
+              className="w-16 h-16 rounded-full mx-auto"
+            />
+            <h2 className="text-center mt-1 text-lg font-semibold">
+              {user?.user_name}
+            </h2>
+          </>
+        )}
       </div>
       {/* Nav bar items */}
       <div className="flex flex-col my-2 items-center gap-1">
@@ -78,8 +89,10 @@ function Sidebar({ sidebar, setSidebar }) {
           className="w-8 h-8 rounded-full"
         />
         <div className="flex flex-col ml-2 flex-1">
-          <span className="text-sm font-semibold">John Doe</span>
-          <span className="text-xs text-gray-500">Free Plan</span>
+          <span className="text-sm font-semibold">{user?.user_name}</span>
+          <span className="text-xs text-gray-500">
+            {user?.isPremium ? "Premium" : "Free"}
+          </span>
         </div>
         <button
           className="ml-2 text-gray-600 hover:text-red-500"

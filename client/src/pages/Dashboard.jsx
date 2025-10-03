@@ -1,8 +1,16 @@
-import { Diamond, Star } from "lucide-react";
+import { Diamond, FileSearch, Star } from "lucide-react";
 import { dummyCreationData } from "../assets/assets";
 import RecentCreation from "../components/RecentCreation";
+import { useUser } from "../hook/useUser";
+import { useQuery } from "@tanstack/react-query";
+import { recentCreations } from "../api/ai";
 
 export default function Dashboard() {
+  const { user, isLoading } = useUser();
+  const { data: creations, isLoading: isLoadingCreations } = useQuery({
+    queryKey: ["creations"],
+    queryFn: recentCreations,
+  });
   return (
     <div className="flex-1 p-8 overflow-y-auto">
       <div className={"flex flex-col w-full h-full justify-between  "}>
@@ -11,7 +19,7 @@ export default function Dashboard() {
             <div className="bg-white p-6 h-[99px] w-[310px] rounded-lg shadow-md flex items-center justify-between">
               <div>
                 <p className="text-gray-500">Total Creations</p>
-                <p className="text-xl font-bold">1</p>
+                <p className="text-xl font-bold">{creations?.count}</p>
               </div>
               <div
                 className="p-3 rounded-lg h-[40px] w-[40px]"
@@ -27,7 +35,9 @@ export default function Dashboard() {
             <div className="bg-white p-6 rounded-lg h-[99px] w-[310px] shadow-md flex items-center justify-between">
               <div>
                 <p className="text-gray-500">Active Plan</p>
-                <p className="text-xl font-bold">Free</p>
+                <p className="text-xl font-bold">
+                  {user?.isPremium ? "Premium" : "Free"}
+                </p>
               </div>
               <div
                 className="p-3 rounded-lg h-[40px] w-[40px]"
@@ -44,14 +54,26 @@ export default function Dashboard() {
       </div>
       <div className="mt-8  flex flex-col gap-2">
         <h2 className="text-2xl font-mono mb-4">Recent Creations</h2>
-        {dummyCreationData.map(({ prompt, type, created_at }) => (
-          <RecentCreation
-            key={created_at}
-            prompt={prompt}
-            type={type}
-            date={created_at}
-          />
-        ))}
+        {creations?.creations?.length > 0 ? (
+          creations.creations.map(({ prompt, type, createdAt }) => (
+            <RecentCreation
+              key={createdAt}
+              prompt={prompt}
+              type={type}
+              date={createdAt}
+            />
+          ))
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-xl bg-gray-50">
+            <FileSearch className="h-10 w-10 text-gray-400 mb-3" />
+            <p className="text-gray-600 font-medium">
+              No recent creations found
+            </p>
+            <p className="text-sm text-gray-400">
+              Start by generating your first AI creation
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
