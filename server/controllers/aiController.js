@@ -170,6 +170,9 @@ const removeBackground = async (req, res) => {
       prompt: `Remove background from ${req.file.originalname}`,
       result: uploadResponse.secure_url,
     });
+    fs.unlink(resume.path, (err) => {
+      if (err) console.error("Failed to delete file:", err);
+    });
     res.json({
       success: true,
       content: uploadResponse.secure_url,
@@ -200,6 +203,9 @@ const removeObject = async (req, res) => {
       prompt: `Remove ${object} from ${req.file.originalname}`,
       result: imageUrl,
     });
+    fs.unlink(resume.path, (err) => {
+      if (err) console.error("Failed to delete file:", err);
+    });
     res.json({
       success: true,
       content: imageUrl,
@@ -214,7 +220,7 @@ const removeObject = async (req, res) => {
 };
 const resumeReview = async (req, res) => {
   try {
-    const { resume } = req.file;
+    const  resume  = req.file;
     if (resume.size > 5 * 1024 * 1024) {
       return res.json({
         success: false,
@@ -223,7 +229,7 @@ const resumeReview = async (req, res) => {
     }
 
     const dataBuffer = fs.readFileSync(resume.path);
-    const pdf = await pdf(dataBuffer);
+    const pdf1 = await pdf(dataBuffer);
     const prompt = `Review my resume provide constructive feedback on its strengths and weaknesses and areas for improvement: ${pdf.text}`;
     const response = await AI.chat.completions.create({
       model: "gemini-2.0-flash",
@@ -245,12 +251,22 @@ const resumeReview = async (req, res) => {
       prompt: `Review ${req.file.originalname} resume`,
       result: content,
     });
+        // Delete file after finishing
+    fs.unlink(resume.path, (err) => {
+      if (err) console.error("Failed to delete file:", err);
+    });
     res.json({
       success: true,
       content,
     });
+    
   } catch (error) {
     console.error("Image generation error:", error.message);
+     if (req.file?.path) {
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error("Cleanup failed:", err);
+      });
+    }
     res.json({
       success: false,
       message: error.message,

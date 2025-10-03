@@ -10,10 +10,12 @@ import RemoveObject from "./pages/RemoveObject";
 import Community from "./pages/Community";
 import BlogTitles from "./pages/BlogTitles";
 import NotFound from "./pages/NotFound";
+import { Toaster} from "react-hot-toast";
 
 function App() {
   return (
     <div>
+      <Toaster />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/ai" element={<Layout />}>

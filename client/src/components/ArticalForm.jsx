@@ -2,6 +2,9 @@ import { PenBox } from "lucide-react";
 import { useState } from "react";
 import GradientButton from "./GradientButton";
 import SelectBtn from "./SelectBtn";
+import axios from "axios";
+
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL; // Set the base URL for axios
 
 function ArticalForm() {
   const [selected, setSelected] = useState();
