@@ -62,3 +62,33 @@ export async function logoutUser() {
     throw new Error("Failed to log out");
   }
 }
+
+export async function forgotPassword(email) {
+  const res = await fetch(`${URL}/api/v1/user/forgot-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email: email.email }),
+  });
+  const result = await res.json();
+  if (!res.ok) {
+    throw new Error(result.message);
+  }
+  return result;
+}
+
+export async function resetPassword(data) {
+  const res = await fetch(`${URL}/api/v1/user/resetPassword/${data.token}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const result = await res.json();
+  if (!res.ok) {
+    throw new Error(result.message);
+  }
+  return result;
+}
