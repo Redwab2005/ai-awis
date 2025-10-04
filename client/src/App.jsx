@@ -19,6 +19,7 @@ import ResetPassword from "./pages/ResetPassword";
 function App() {
   return (
     <div>
+      <Toaster />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
