@@ -36,12 +36,24 @@ const generateArticle = async (req, res) => {
   try {
     const { prompt, length } = req.body;
 
+    const articlePrompt = `Write a comprehensive article about "${prompt}". 
+
+Requirements:
+- Create a well-structured article with an engaging introduction, main body, and conclusion
+- Use clear and professional language
+- Include relevant information and insights about the topic
+- Make it informative and engaging for readers
+- Ensure the article flows logically from one section to the next
+- Write approximately ${length === 300 ? '150-200 words' : '500-800 words'} as requested
+
+Topic: ${prompt}`;
+
     const response = await AI.chat.completions.create({
       model: "gemini-2.0-flash",
       messages: [
         {
           role: "user",
-          content: prompt,
+          content: articlePrompt,
         },
       ],
       temperature: 0.7,
@@ -73,12 +85,26 @@ const generateBlogTitle = async (req, res) => {
   try {
     const { prompt } = req.body;
 
+    const titlePrompt = `Generate 10 creative and engaging blog post titles about "${prompt}". 
+
+Requirements:
+- Each title should be compelling and click-worthy
+- Use different styles: questions, how-to guides, lists, comparisons, etc.
+- Make titles SEO-friendly and searchable
+- Vary the length and approach for each title
+- Focus specifically on the topic: ${prompt}
+- Ensure titles are relevant and will attract readers interested in this subject
+
+Format: Present each title on a new line, numbered 1-10.
+
+Topic: ${prompt}`;
+
     const response = await AI.chat.completions.create({
       model: "gemini-2.0-flash",
       messages: [
         {
           role: "user",
-          content: prompt,
+          content: titlePrompt,
         },
       ],
       temperature: 0.7,
@@ -170,7 +196,7 @@ const removeBackground = async (req, res) => {
       prompt: `Remove background from ${req.file.originalname}`,
       result: uploadResponse.secure_url,
     });
-    fs.unlink(resume.path, (err) => {
+    fs.unlink(path, (err) => {
       if (err) console.error("Failed to delete file:", err);
     });
     res.json({
@@ -190,25 +216,27 @@ const removeObject = async (req, res) => {
     const { object } = req.body;
     const path = req.file.path;
 
-    // ✅ Upload to Cloudinary
-    const { public_id } = await cloudinary.uploader.upload(path);
-    const imageUrl = cloudinary.url(public_id, {
-      transformation: [{ effect: `gen_remove:${object}` }],
-      resource_type: "image",
+    // ✅ Upload to Cloudinary with transformation applied during upload
+    const uploadResponse = await cloudinary.uploader.upload(path, {
+      transformation: [
+        {
+          effect: `gen_remove:prompt_${object}`,
+        },
+      ],
     });
 
     await AiModel.create({
       user_id: req.user._id,
       type: "remove-object",
       prompt: `Remove ${object} from ${req.file.originalname}`,
-      result: imageUrl,
+      result: uploadResponse.secure_url,
     });
-    fs.unlink(resume.path, (err) => {
+    fs.unlink(path, (err) => {
       if (err) console.error("Failed to delete file:", err);
     });
     res.json({
       success: true,
-      content: imageUrl,
+      content: uploadResponse.secure_url,
     });
   } catch (error) {
     console.error("Image generation error:", error.message);

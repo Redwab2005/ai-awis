@@ -1,19 +1,13 @@
-import { PenBox } from "lucide-react";
-import { useState } from "react";
+import { PenBox, Star } from "lucide-react";
 import GradientButton from "./GradientButton";
 import SelectBtn from "./SelectBtn";
-import axios from "axios";
 
-axios.defaults.baseURL = import.meta.env.VITE_BASE_URL; // Set the base URL for axios
-
-function ArticalForm() {
-  const [selected, setSelected] = useState();
-
+function ArticalForm({ selectedLength, setSelectedLength, topic, setTopic, loading, onGenerateArticle }) {
   return (
-    <div className=" bg-[#FFFFFF] h-[310px] w-full md:w-[507px]   rounded-[10px] border-[1px] border-[#EBEBEB] p-5">
+    <div className=" bg-[#FFFFFF] h-[auto] w-full md:w-[507px]   rounded-[10px] border-[1px] border-[#EBEBEB] p-5">
       <div className="flex flex-col gap-7">
         <div className="flex gap-2 items-center">
-          <img src="/icons/star.svg" alt=" icon" />
+          <Star className="w-5 h-5 text-blue-600" />
           <p className="text-[#000000] font-bold text-[20px]">
             AI Article Writer
           </p>
@@ -31,6 +25,9 @@ function ArticalForm() {
             type="text"
             className="w-full h-9 rounded-lg border  px-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
             placeholder="The future of artificial intelligence"
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+            disabled={loading}
           />
         </div>
 
@@ -40,8 +37,8 @@ function ArticalForm() {
           <div className="flex gap-2">
             {/* Short Button */}
             <SelectBtn
-              selected={selected}
-              setSelected={setSelected}
+              selected={selectedLength}
+              setSelected={setSelectedLength}
               selectColor={"blue-500"}
             >
               Short (100 - 200 word)
@@ -49,15 +46,21 @@ function ArticalForm() {
 
             {/* Long Button */}
             <SelectBtn
-              selected={selected}
-              setSelected={setSelected}
+              selected={selectedLength}
+              setSelected={setSelectedLength}
               selectColor={"blue-500"}
             >
               Long (500 - 800 word)
             </SelectBtn>
           </div>
         </div>
-        <GradientButton icon={PenBox}>Generate Article</GradientButton>
+        <GradientButton
+          icon={PenBox}
+          disabled={loading || !topic.trim() || !selectedLength}
+          onClick={onGenerateArticle}
+        >
+          {loading ? "Generating..." : "Generate Article"}
+        </GradientButton>
       </div>
     </div>
   );

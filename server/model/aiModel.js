@@ -10,7 +10,7 @@ const aiModelSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: [
-      "atical",
+      "article",
       "blog-title",
       "image-generation",
       "remove-background",
