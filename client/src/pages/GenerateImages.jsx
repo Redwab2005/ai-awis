@@ -1,6 +1,7 @@
 import { useState } from "react";
 import GenerateImagesForm from "../components/GenerateImagesForm";
 import GenerateImagesOutput from "../components/GenerateImagesOutput";
+import PremiumGate from "../components/PremiumGate";
 
 export default function GenerateImages() {
   const [selected, setSelected] = useState();
@@ -38,18 +39,20 @@ export default function GenerateImages() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row w-[90%] min-h-screen gap-5 m-5 ">
-      <GenerateImagesForm
-        selected={selected}
-        setSelected={setSelected}
-        prompt={prompt}
-        setPrompt={setPrompt}
-        isPublic={isPublic}
-        setIsPublic={setIsPublic}
-        loading={loading}
-        onGenerate={handleGenerate}
-      />
-      <GenerateImagesOutput imageUrl={imageUrl} loading={loading} error={error} />
-    </div>
+    <PremiumGate>
+      <div className="flex flex-col md:flex-row w-[90%] min-h-screen gap-5 m-5 ">
+        <GenerateImagesForm
+          selected={selected}
+          setSelected={setSelected}
+          prompt={prompt}
+          setPrompt={setPrompt}
+          isPublic={isPublic}
+          setIsPublic={setIsPublic}
+          loading={loading}
+          onGenerate={handleGenerate}
+        />
+        <GenerateImagesOutput imageUrl={imageUrl} loading={loading} error={error} />
+      </div>
+    </PremiumGate>
   );
 }

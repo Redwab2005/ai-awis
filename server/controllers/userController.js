@@ -186,3 +186,90 @@ exports.logout = (req, res) => {
   });
   res.status(200).json({ status: "success" });
 };
+
+exports.subscribeToPremium = async (req, res) => {
+  try {
+    const { plan, paymentMethod } = req.body;
+    
+    // Update user's premium status
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { 
+        isPremium: true,
+        updated_at: Date.now()
+      },
+      { new: true }
+    );
+
+    // Compute period end for email (simple 30/365-day approximation)
+    const startDate = new Date();
+    const periodEnd = new Date(
+      plan === "yearly"
+        ? startDate.getTime() + 365 * 24 * 60 * 60 * 1000
+        : startDate.getTime() + 30 * 24 * 60 * 60 * 1000
+    );
+
+    try {
+      await new Email(user).sendSubscriptionConfirmation({
+        plan,
+        amount: plan === "yearly" ? 96 : 12,
+        currency: "USD",
+        paymentMethod,
+        periodEnd: periodEnd.toDateString(),
+      });
+    } catch (e) {
+      // Non-blocking email failure
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Successfully subscribed to premium!",
+      data: {
+        user: user,
+        plan: plan,
+        paymentMethod: paymentMethod
+      }
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
+};
+
+exports.cancelSubscription = async (req, res) => {
+  try {
+    // Update user's premium status to false
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { 
+        isPremium: false,
+        updated_at: Date.now()
+      },
+      { new: true }
+    );
+
+    // Optional: if you keep track of period end, include it here
+    try {
+      await new Email(user).sendCancellationConfirmation({
+        currentPeriodEnd: undefined,
+      });
+    } catch (e) {
+      // Non-blocking email failure
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "Subscription cancelled successfully. You're now on the free plan.",
+      data: {
+        user: user
+      }
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
+};

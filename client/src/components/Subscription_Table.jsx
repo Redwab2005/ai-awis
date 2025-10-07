@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Check, X, Sparkles, Star } from "lucide-react";
+import { Check, X, Sparkles, Star, Crown, AlertTriangle, Shield } from "lucide-react";
 
 /**
  * Highly-modern 2-plan pricing table (Free & Premium)
@@ -60,7 +60,7 @@ function Price({ amount, period }) {
   );
 }
 
-export default function PricingTable({ onSelect }) {
+export default function PricingTable({ onSelect, onPremiumClick, user, onCancelSubscription }) {
   const [period, setPeriod] = useState("monthly"); // 'monthly' | 'yearly'
 
   return (
@@ -69,13 +69,13 @@ export default function PricingTable({ onSelect }) {
       <div className="text-center max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-sm">
           <Sparkles className="w-4 h-4" />
-          <span>Simple pricing, no surprises</span>
+          <span>{user?.isPremium ? "Your current plan" : "Simple pricing, no surprises"}</span>
         </div>
         <h2 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight text-slate-800">
-          Choose your plan
+          {user?.isPremium ? "Manage your subscription" : "Choose your plan"}
         </h2>
         <p className="mt-3 text-slate-600">
-          Start for free and upgrade anytime. Cancel whenever you like.
+          {user?.isPremium ? "You can downgrade anytime." : "Start for free and upgrade anytime. Cancel whenever you like."}
         </p>
 
         {/* Billing toggle */}
@@ -108,8 +108,58 @@ export default function PricingTable({ onSelect }) {
         )}
       </div>
 
+      {/* Premium User Section */}
+      {user?.isPremium && (
+        <div className="mt-12 max-w-2xl mx-auto">
+          <div className="border border-slate-200 rounded-xl">
+            <div className="p-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="inline-flex items-center gap-2 text-slate-900">
+                    <Crown className="w-6 h-6 text-yellow-500" />
+                    <span className="text-lg font-semibold">Current plan</span>
+                  </div>
+                  <h3 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">Premium</h3>
+                  <p className="mt-1 text-slate-600">Unlimited access to all features</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-3xl font-extrabold text-slate-900">$12</div>
+                  <div className="text-slate-500">/mo</div>
+                </div>
+              </div>
+
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+                {[
+                  { label: "All tools unlocked" },
+                  { label: "Priority support" },
+                  { label: "Commercial usage" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 p-3 rounded-md border border-slate-200">
+                    <Check className="w-4 h-4 text-emerald-600" />
+                    <span className="text-sm text-slate-700">{item.label}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8 flex items-center justify-between">
+                <div className="text-sm text-slate-500">Billed monthly. Cancel anytime.</div>
+                <button
+                  onClick={() => {
+                    console.log('[PricingTable] Manage clicked');
+                    onCancelSubscription?.();
+                  }}
+                  className="inline-flex items-center justify-center rounded-md px-4 py-2 border border-slate-300 text-slate-800 hover:bg-slate-50 transition"
+                >
+                  Manage
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Cards */}
-      <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+      <div className={`grid grid-cols-1 ${user?.isPremium ? 'hidden' : 'md:grid-cols-2 max-w-5xl'} gap-6 mt-12`}>
         {PLANS.map((plan) => {
           const amount = plan.price[period];
           const isPopular = plan.popular;
@@ -151,7 +201,14 @@ export default function PricingTable({ onSelect }) {
                   </div>
 
                   <button
-                    onClick={() => onSelect?.(plan.id, period)}
+                    onClick={() => {
+                      console.log('[PricingTable] CTA clicked', { plan: plan.id, period });
+                      if (plan.id === "premium") {
+                        onPremiumClick?.();
+                      } else {
+                        onSelect?.(plan.id, period);
+                      }
+                    }}
                     className={`${
                       isPopular
                         ? "mt-6 w-full inline-flex items-center justify-center rounded-xl bg-indigo-600 text-white px-4 py-3 font-medium shadow-sm hover:bg-indigo-700 transition"

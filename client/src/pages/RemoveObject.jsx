@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import RemoveObjectForm from "../components/RemoveObjectForm";
 import RemoveObjectOutput from "../components/RemoveObjectOutput";
+import PremiumGate from "../components/PremiumGate";
 
 export default function RemoveObject() {
   const [selectedFile, setSelectedFile] = useState();
@@ -50,20 +51,22 @@ export default function RemoveObject() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row w-[90%] min-h-screen gap-5 m-5 ">
-      <RemoveObjectForm
-        selectedFile={selectedFile}
-        setSelectedFile={setSelectedFile}
-        objectName={objectName}
-        setObjectName={setObjectName}
-        loading={loading}
-        onRemoveObject={handleRemoveObject}
-      />
-      <RemoveObjectOutput
-        processedImageUrl={processedImageUrl}
-        loading={loading}
-        error={error}
-      />
-    </div>
+    <PremiumGate>
+      <div className="flex flex-col md:flex-row w-[90%] min-h-screen gap-5 m-5 ">
+        <RemoveObjectForm
+          selectedFile={selectedFile}
+          setSelectedFile={setSelectedFile}
+          objectName={objectName}
+          setObjectName={setObjectName}
+          loading={loading}
+          onRemoveObject={handleRemoveObject}
+        />
+        <RemoveObjectOutput
+          processedImageUrl={processedImageUrl}
+          loading={loading}
+          error={error}
+        />
+      </div>
+    </PremiumGate>
   );
 }
