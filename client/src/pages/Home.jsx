@@ -14,7 +14,7 @@ const Home = () => {
   const { user } = useUser();
 
   const handlePremiumClick = () => {
-    console.log("[Home] Go Premium clicked");
+    console.log("[Home] Go Premium 1clicked");
     setGatewayMode("subscribe");
     setIsSubscriptionOpen(true);
   };
