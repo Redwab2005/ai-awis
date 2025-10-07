@@ -13,5 +13,7 @@ router.get("/me", protect, (req, res) => {
   res.json({ success: true, user: req.user });
 });
 router.post("/logout", userController.logout);
+router.post("/subscribe-premium", protect, userController.subscribeToPremium);
+router.post("/cancel-subscription", protect, userController.cancelSubscription);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import ReviewResumeForm from "../components/ReviewResumeForm";
 import ReviewResumeOutput from "../components/ReviewResumeOutput";
+import PremiumGate from "../components/PremiumGate";
 
 export default function ReviewResume() {
   const [selectedFile, setSelectedFile] = useState();
@@ -43,18 +44,20 @@ export default function ReviewResume() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row w-[90%] min-h-screen gap-5 m-5 ">
-      <ReviewResumeForm
-        selectedFile={selectedFile}
-        setSelectedFile={setSelectedFile}
-        loading={loading}
-        onReviewResume={handleReviewResume}
-      />
-      <ReviewResumeOutput
-        reviewResult={reviewResult}
-        loading={loading}
-        error={error}
-      />
-    </div>
+    <PremiumGate>
+      <div className="flex flex-col md:flex-row w-[90%] min-h-screen gap-5 m-5 ">
+        <ReviewResumeForm
+          selectedFile={selectedFile}
+          setSelectedFile={setSelectedFile}
+          loading={loading}
+          onReviewResume={handleReviewResume}
+        />
+        <ReviewResumeOutput
+          reviewResult={reviewResult}
+          loading={loading}
+          error={error}
+        />
+      </div>
+    </PremiumGate>
   );
 }

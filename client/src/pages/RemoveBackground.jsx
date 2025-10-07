@@ -1,6 +1,7 @@
 import { useState } from "react";
 import RemoveBackGroundForm from "../components/RemoveBackGroundForm";
 import RemoveBackgroundOutput from "../components/RemoveBackgroundOutput";
+import PremiumGate from "../components/PremiumGate";
 
 export default function RemoveBackground() {
   const [selectedFile, setSelectedFile] = useState();
@@ -43,18 +44,20 @@ export default function RemoveBackground() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row w-[90%] min-h-screen gap-5 m-5 ">
-      <RemoveBackGroundForm
-        selectedFile={selectedFile}
-        setSelectedFile={setSelectedFile}
-        loading={loading}
-        onRemoveBackground={handleRemoveBackground}
-      />
-      <RemoveBackgroundOutput
-        processedImageUrl={processedImageUrl}
-        loading={loading}
-        error={error}
-      />
-    </div>
+    <PremiumGate>
+      <div className="flex flex-col md:flex-row w-[90%] min-h-screen gap-5 m-5 ">
+        <RemoveBackGroundForm
+          selectedFile={selectedFile}
+          setSelectedFile={setSelectedFile}
+          loading={loading}
+          onRemoveBackground={handleRemoveBackground}
+        />
+        <RemoveBackgroundOutput
+          processedImageUrl={processedImageUrl}
+          loading={loading}
+          error={error}
+        />
+      </div>
+    </PremiumGate>
   );
 }

@@ -92,3 +92,34 @@ export async function resetPassword(data) {
   }
   return result;
 }
+
+export async function subscribeToPremium(data) {
+  const res = await fetch(`${URL}/api/v1/user/subscribe-premium`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(data),
+  });
+  const result = await res.json();
+  if (!res.ok) {
+    throw new Error(result.message);
+  }
+  return result;
+}
+
+export async function cancelSubscription() {
+  const res = await fetch(`${URL}/api/v1/user/cancel-subscription`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  const result = await res.json();
+  if (!res.ok) {
+    throw new Error(result.message);
+  }
+  return result;
+}
