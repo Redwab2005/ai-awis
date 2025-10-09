@@ -190,24 +190,41 @@ exports.logout = (req, res) => {
 exports.subscribeToPremium = async (req, res) => {
   try {
     const { plan, paymentMethod } = req.body;
-    
-    // Update user's premium status
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { 
-        isPremium: true,
-        updated_at: Date.now()
-      },
-      { new: true }
-    );
-
-    // Compute period end for email (simple 30/365-day approximation)
+    if (!plan && !paymentMethod) {
+      res.status(400).json({
+        status: "fail",
+        message: "Please provide plan and payment method",
+      });
+    }
     const startDate = new Date();
     const periodEnd = new Date(
       plan === "yearly"
         ? startDate.getTime() + 365 * 24 * 60 * 60 * 1000
         : startDate.getTime() + 30 * 24 * 60 * 60 * 1000
     );
+    // Update user's premium status
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({
+        status: "fail",
+        message: "User not found",
+      });
+    }
+
+    //check if user is already premium
+    if (user.isPremium) {
+      return res.status(400).json({
+        status: "fail",
+        message: "User is already premium",
+      });
+    }
+    // Update user's premium status
+    user.isPremium = true;
+    user.premiumPlan = plan;
+    user.paymentMethod = paymentMethod;
+    user.premiumPaymentDate = startDate;
+    user.premiumExpiresAt = periodEnd;
+    await user.save();
 
     try {
       await new Email(user).sendSubscriptionConfirmation({
@@ -227,8 +244,8 @@ exports.subscribeToPremium = async (req, res) => {
       data: {
         user: user,
         plan: plan,
-        paymentMethod: paymentMethod
-      }
+        paymentMethod: paymentMethod,
+      },
     });
   } catch (err) {
     res.status(500).json({
@@ -241,15 +258,20 @@ exports.subscribeToPremium = async (req, res) => {
 exports.cancelSubscription = async (req, res) => {
   try {
     // Update user's premium status to false
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { 
-        isPremium: false,
-        updated_at: Date.now()
-      },
-      { new: true }
-    );
+    const user = await User.findById(req.user._id);
+    if (user.isPremium === false) {
+      return res.status(400).json({
+        status: "fail",
+        message: "User is not premium",
+      });
+    }
 
+    user.isPremium = false;
+    user.premiumPlan = null;
+    user.paymentMethod = null;
+    user.premiumPaymentDate = null;
+    user.premiumExpiresAt = null;
+    await user.save();
     // Optional: if you keep track of period end, include it here
     try {
       await new Email(user).sendCancellationConfirmation({
@@ -261,10 +283,11 @@ exports.cancelSubscription = async (req, res) => {
 
     res.status(200).json({
       status: "success",
-      message: "Subscription cancelled successfully. You're now on the free plan.",
+      message:
+        "Subscription cancelled successfully. You're now on the free plan.",
       data: {
-        user: user
-      }
+        user: user,
+      },
     });
   } catch (err) {
     res.status(500).json({

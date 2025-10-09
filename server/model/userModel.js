@@ -18,7 +18,9 @@ const userSchema = new mongoose.Schema({
   },
   confirmPassword: {
     type: String,
-    required: [true, "Please confirm your password"],
+    required: function () {
+      return this.isModified("password") || this.isNew;
+    },
     validate: {
       validator: function (value) {
         return value === this.password;
@@ -39,6 +41,17 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  premiumExpiresAt: Date,
+  premiumPaymentDate: Date,
+  paymentMethod: {
+    type: String,
+    enum: ["creditCard", "paypal", "applePay", "googlePay"],
+  },
+  premiumPlan: {
+    type: String,
+    enum: ["monthly", "yearly"],
+  },
+
   updated_at: {
     type: Date,
     default: Date.now,
@@ -61,6 +74,10 @@ userSchema.pre("save", async function (next) {
 userSchema.pre("save", function (next) {
   if (!this.isModified("password") || this.isNew) return next();
   this.passwordChangedAt = Date.now() - 1000; //subtract 1 sec to ensure token is created after password has been changed
+  next();
+});
+userSchema.pre("save", function (next) {
+  this.updated_at = Date.now();
   next();
 });
 const User = mongoose.model("User", userSchema);

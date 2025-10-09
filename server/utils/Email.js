@@ -109,8 +109,16 @@ module.exports = class Email {
   }
 
   async sendSubscriptionConfirmation(details) {
-    const { plan, amount, currency = "USD", paymentMethod, periodEnd } = details;
-    const subject = `Your ${plan === "yearly" ? "Yearly" : "Monthly"} Premium Subscription`;
+    const {
+      plan,
+      amount,
+      currency = "USD",
+      paymentMethod,
+      periodEnd,
+    } = details;
+    const subject = `Your ${
+      plan === "yearly" ? "Yearly" : "Monthly"
+    } Premium Subscription`;
 
     // Plain text fallback
     const textLines = [
@@ -132,7 +140,9 @@ module.exports = class Email {
         <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #e2e8f0">
           <tr>
             <td style="padding:24px 24px 0 24px">
-              <h1 style="margin:0 0 8px 0;font-family:Inter,Segoe UI,Arial,sans-serif;font-size:20px;line-height:28px;color:#0f172a;">Thanks for upgrading, ${this.userName}!</h1>
+              <h1 style="margin:0 0 8px 0;font-family:Inter,Segoe UI,Arial,sans-serif;font-size:20px;line-height:28px;color:#0f172a;">Thanks for upgrading, ${
+                this.userName
+              }!</h1>
               <p style="margin:0 0 16px 0;font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;line-height:20px;color:#334155;">Here are your Premium subscription details.</p>
             </td>
           </tr>
@@ -142,7 +152,9 @@ module.exports = class Email {
                 <tr>
                   <td style="padding:16px 20px;border-bottom:1px solid #e2e8f0">
                     <div style="font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;color:#0f172a"><strong>Plan</strong></div>
-                    <div style="font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;color:#334155">${plan === "yearly" ? "Yearly" : "Monthly"}</div>
+                    <div style="font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;color:#334155">${
+                      plan === "yearly" ? "Yearly" : "Monthly"
+                    }</div>
                   </td>
                 </tr>
                 <tr>
@@ -151,13 +163,17 @@ module.exports = class Email {
                     <div style="font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;color:#334155">${amount} ${currency}</div>
                   </td>
                 </tr>
-                ${paymentMethod ? `
+                ${
+                  paymentMethod
+                    ? `
                 <tr>
                   <td style="padding:16px 20px;border-bottom:1px solid #e2e8f0">
                     <div style="font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;color:#0f172a"><strong>Payment method</strong></div>
                     <div style="font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;color:#334155">${paymentMethod}</div>
                   </td>
-                </tr>` : ""}
+                </tr>`
+                    : ""
+                }
                 <tr>
                   <td style="padding:16px 20px">
                     <div style="font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;color:#0f172a"><strong>Renews on</strong></div>
@@ -191,7 +207,9 @@ module.exports = class Email {
       `Hi ${this.userName},`,
       ``,
       `Your Premium subscription has been cancelled.`,
-      currentPeriodEnd ? `Access remains active until: ${currentPeriodEnd}` : `Your access to Premium features has been removed.`,
+      currentPeriodEnd
+        ? `Access remains active until: ${currentPeriodEnd}`
+        : `Your access to Premium features has been removed.`,
       ``,
       `You can re-upgrade anytime from your dashboard.`,
     ].join("\n");
@@ -203,24 +221,30 @@ module.exports = class Email {
           <tr>
             <td style="padding:24px 24px 0 24px">
               <h1 style="margin:0 0 8px 0;font-family:Inter,Segoe UI,Arial,sans-serif;font-size:20px;line-height:28px;color:#0f172a;">Subscription cancelled</h1>
-              <p style="margin:0 0 16px 0;font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;line-height:20px;color:#334155;">We're sorry to see you go, ${this.userName}.</p>
+              <p style="margin:0 0 16px 0;font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;line-height:20px;color:#334155;">We're sorry to see you go, ${
+                this.userName
+              }.</p>
             </td>
           </tr>
           <tr>
             <td style="padding:0 24px 24px 24px">
               <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border:1px solid #e2e8f0;border-radius:10px">
-                ${currentPeriodEnd ? `
+                ${
+                  currentPeriodEnd
+                    ? `
                 <tr>
                   <td style="padding:16px 20px">
                     <div style="font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;color:#0f172a"><strong>Access remains until</strong></div>
                     <div style="font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;color:#334155">${currentPeriodEnd}</div>
                   </td>
-                </tr>` : `
+                </tr>`
+                    : `
                 <tr>
                   <td style="padding:16px 20px">
                     <div style="font-family:Inter,Segoe UI,Arial,sans-serif;font-size:14px;color:#334155">Your Premium access has been removed.</div>
                   </td>
-                </tr>`}
+                </tr>`
+                }
               </table>
 
               <div style="height:16px"></div>

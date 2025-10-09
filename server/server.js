@@ -4,6 +4,8 @@ const { default: mongoose } = require("mongoose");
 const app = require("./app.js");
 const connectCloudinary = require("./configs/cloudinary.js");
 const PORT = process.env.PORT || 3000;
+const subscriptionChecker = require("./jobs/subscriptionChecker");
+subscriptionChecker();
 connectCloudinary();
 
 //db string
