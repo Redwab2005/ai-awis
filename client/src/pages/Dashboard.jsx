@@ -1,5 +1,4 @@
 import { Diamond, FileSearch, Loader, Star } from "lucide-react";
-import { dummyCreationData } from "../assets/assets";
 import RecentCreation from "../components/RecentCreation";
 import { useUser } from "../hook/useUser";
 import { useQuery } from "@tanstack/react-query";

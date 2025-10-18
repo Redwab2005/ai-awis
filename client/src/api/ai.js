@@ -9,3 +9,14 @@ export const recentCreations = async () => {
   const data = await res.json();
   return data;
 };
+
+export const community = async () => {
+  const res = await fetch(`${URL}/api/v1/ai/community`, {
+    credentials: "include",
+  });
+  if (!res.ok) {
+    throw new Error("Failed to fetch community");
+  }
+  const data = await res.json();
+  return data;
+};
