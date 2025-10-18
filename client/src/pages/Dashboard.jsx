@@ -1,4 +1,4 @@
-import { Diamond, FileSearch, Star } from "lucide-react";
+import { Diamond, FileSearch, Loader, Star } from "lucide-react";
 import { dummyCreationData } from "../assets/assets";
 import RecentCreation from "../components/RecentCreation";
 import { useUser } from "../hook/useUser";
@@ -19,7 +19,13 @@ export default function Dashboard() {
             <div className="bg-white p-6 h-[99px] w-[310px] rounded-lg shadow-md flex items-center justify-between">
               <div>
                 <p className="text-gray-500">Total Creations</p>
-                <p className="text-xl font-bold">{creations?.count}</p>
+                <p className="text-xl font-bold">
+                  {isLoadingCreations ? (
+                    <Loader className="w-4 h-4 animate-spin" />
+                  ) : (
+                    creations?.count
+                  )}
+                </p>
               </div>
               <div
                 className="p-3 rounded-lg h-[40px] w-[40px]"
@@ -36,7 +42,13 @@ export default function Dashboard() {
               <div>
                 <p className="text-gray-500">Active Plan</p>
                 <p className="text-xl font-bold">
-                  {user?.isPremium ? "Premium" : "Free"}
+                  {isLoading ? (
+                    <Loader className="w-4 h-4 animate-spin" />
+                  ) : user?.isPremium ? (
+                    "Premium"
+                  ) : (
+                    "Free"
+                  )}
                 </p>
               </div>
               <div
@@ -55,12 +67,13 @@ export default function Dashboard() {
       <div className="mt-8  flex flex-col gap-2">
         <h2 className="text-2xl font-mono mb-4">Recent Creations</h2>
         {creations?.creations?.length > 0 ? (
-          creations.creations.map(({ prompt, type, createdAt }) => (
+          creations.creations.map(({ prompt, type, createdAt, result }) => (
             <RecentCreation
               key={createdAt}
               prompt={prompt}
               type={type}
               date={createdAt}
+              result={result}
             />
           ))
         ) : (

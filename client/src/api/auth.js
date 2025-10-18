@@ -1,4 +1,4 @@
-const URL = 'http://localhost:3000';
+const URL = "http://localhost:3000";
 export async function fetchUser() {
   const res = await fetch(`${URL}/api/v1/user/me`, {
     credentials: "include",
@@ -93,7 +93,7 @@ export async function resetPassword(data) {
   return result;
 }
 
-export async function subscribeToPremium(data) {
+export async function subscribeToPremium(data) { 
   const res = await fetch(`${URL}/api/v1/user/subscribe-premium`, {
     method: "POST",
     headers: {
