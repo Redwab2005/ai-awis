@@ -13,7 +13,7 @@ export default function Layout() {
         style={{ height: "calc(100vh - 62px)" }}
       >
         <Sidebar sidebar={sidebar} setSidebar={setSidebar} />
-        <div className="flex-1 bg-[#F9FAFB] overflow-hidden h-full">
+        <div className="flex-1 bg-[#F9FAFB] overflow-auto  min-h-full">
           <Outlet />
         </div>
       </div>

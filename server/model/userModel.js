@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
   premiumPaymentDate: Date,
   paymentMethod: {
     type: String,
-    enum: ["creditCard", "paypal", "applePay", "googlePay"],
+    enum: ["card", "paypal", "applePay", "googlePay"],
   },
   premiumPlan: {
     type: String,
