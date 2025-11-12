@@ -8,6 +8,7 @@ const {
   resumeReview,
   recentCreation,
   community,
+  likeToggle,
 } = require("../controllers/aiController");
 const upload = require("../configs/multer");
 const { protect } = require("../middlewares/protected");
@@ -22,5 +23,6 @@ aiRouter.post("/remove-background", upload.single("image"), removeBackground);
 aiRouter.post("/remove-object", upload.single("image"), removeObject);
 aiRouter.post("/resume-review", upload.single("resume"), resumeReview);
 aiRouter.get("/community", community);
+aiRouter.post("/like-toggle", likeToggle);
 
 module.exports = aiRouter;
