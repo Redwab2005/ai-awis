@@ -56,6 +56,15 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  likedCreations: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "AiModel",
+      },
+    ],
+    default: [],
+  },
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,

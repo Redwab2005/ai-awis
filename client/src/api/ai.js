@@ -20,3 +20,17 @@ export const community = async () => {
   const data = await res.json();
   return data;
 };
+
+export const likeToggle = async (id) => {
+  const res = await fetch(`${URL}/api/v1/ai/like-toggle`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ id }),
+  });
+  if (!res.ok) {
+    throw new Error("Failed to toggle like");
+  }
+  const data = await res.json();
+  return data;
+};

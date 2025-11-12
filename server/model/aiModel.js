@@ -1,4 +1,5 @@
 const { default: mongoose } = require("mongoose");
+const { validate } = require("./userModel");
 
 const aiModelSchema = new mongoose.Schema({
   user_id: {
@@ -31,6 +32,25 @@ const aiModelSchema = new mongoose.Schema({
       },
       message: "isPublic can only be true when type is 'image-generation'",
     },
+  },
+  likes: {
+    type: Number,
+    default: 0,
+    validate: {
+      validator: function (v) {
+        return v >= 0 && this.isPublic === true;
+      },
+      message: "Likes cannot be negative and can only be set for public items",
+    },
+  },
+  likedBy: {
+    type: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    default: [],
   },
   prompt: {
     type: String,

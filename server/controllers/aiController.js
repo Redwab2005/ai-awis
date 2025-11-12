@@ -8,6 +8,7 @@ const fs = require("fs");
 const pdf = require("pdf-parse/lib/pdf-parse.js");
 const AiModel = require("../model/aiModel");
 const { count } = require("console");
+const User = require("../model/userModel");
 
 const AI = new OpenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -44,7 +45,9 @@ Requirements:
 - Include relevant information and insights about the topic
 - Make it informative and engaging for readers
 - Ensure the article flows logically from one section to the next
-- Write approximately ${length === 300 ? '150-200 words' : '500-800 words'} as requested
+- Write approximately ${
+      length === 300 ? "150-200 words" : "500-800 words"
+    } as requested
 
 Topic: ${prompt}`;
 
@@ -248,7 +251,7 @@ const removeObject = async (req, res) => {
 };
 const resumeReview = async (req, res) => {
   try {
-    const  resume  = req.file;
+    const resume = req.file;
     if (resume.size > 5 * 1024 * 1024) {
       return res.json({
         success: false,
@@ -279,7 +282,7 @@ const resumeReview = async (req, res) => {
       prompt: `Review ${req.file.originalname} resume`,
       result: content,
     });
-        // Delete file after finishing
+    // Delete file after finishing
     fs.unlink(resume.path, (err) => {
       if (err) console.error("Failed to delete file:", err);
     });
@@ -287,10 +290,9 @@ const resumeReview = async (req, res) => {
       success: true,
       content,
     });
-    
   } catch (error) {
     console.error("Image generation error:", error.message);
-     if (req.file?.path) {
+    if (req.file?.path) {
       fs.unlink(req.file.path, (err) => {
         if (err) console.error("Cleanup failed:", err);
       });
@@ -322,6 +324,68 @@ const community = async (req, res) => {
   }
 };
 
+const likeToggle = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const userId = req.user._id;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Creation id is required" });
+    }
+
+    const aiModel = await AiModel.findById(id);
+    const user = await User.findById(userId);
+
+    if (!aiModel || !user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Model or user not found" });
+    }
+
+    if (!aiModel.isPublic) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Likes are only available on public creations" });
+    }
+
+    if (!Array.isArray(aiModel.likedBy)) {
+      aiModel.set("likedBy", []);
+    }
+
+    if (!Array.isArray(user.likedCreations)) {
+      user.set("likedCreations", []);
+    }
+
+    const userIdString = userId.toString();
+    const alreadyLiked = aiModel.likedBy.some(
+      (likedUserId) => likedUserId.toString() === userIdString
+    );
+
+    if (alreadyLiked) {
+      aiModel.likedBy.pull(userId);
+      aiModel.likes = Math.max(0, (aiModel.likes || 0) - 1);
+      user.likedCreations.pull(aiModel._id);
+    } else {
+      aiModel.likedBy.addToSet(userId);
+      aiModel.likes = (aiModel.likes || 0) + 1;
+      user.likedCreations.addToSet(aiModel._id);
+    }
+
+    await Promise.all([aiModel.save(), user.save()]);
+
+    res.status(200).json({
+      success: true,
+      liked: !alreadyLiked,
+      likes: aiModel.likes,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 module.exports = {
   generateArticle,
   generateImage,
@@ -331,4 +395,5 @@ module.exports = {
   resumeReview,
   recentCreation,
   community,
+  likeToggle,
 };
