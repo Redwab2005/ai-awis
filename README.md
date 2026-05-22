@@ -54,9 +54,9 @@ Optimized for desktop, tablet, and mobile devices.
 - Image Processing APIs
 - AI Content Generation APIs
 
-### Dev Tools
+### Dev Tools used
 - Git & GitHub
-- Docker
+
 - Postman
 
 ---
